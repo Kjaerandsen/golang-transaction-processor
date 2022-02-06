@@ -1,14 +1,28 @@
-package golang_two
+package main
+
+import (
+	"fmt"
+	"os"
+)
 
 // Takes flags to run the different functions.
 func main() {
-
+	generateRandomTxs(5)
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
 // with a uniform random distribution, this is written to the file txs.txt
 func generateRandomTxs(n int) {
+	outputFile, err := os.Create("txs.txt")
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+		return
+	}
+	// Close the file after used
+	defer outputFile.Close()
 
+	// Write to the file
+	_, err = outputFile.WriteString("0.99\n0.23\n0.34\n")
 }
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
