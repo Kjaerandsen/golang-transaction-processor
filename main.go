@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 )
 
@@ -31,7 +32,7 @@ func generateRandomTxs(n int) {
 
 	// Generate the n different values
 	for i := 0; i < n; i++ {
-		if i!= 1 {
+		if i != 1 {
 			outputString = outputString + "\n"
 		}
 		outputString = outputString + fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/1000)*100)/100)
