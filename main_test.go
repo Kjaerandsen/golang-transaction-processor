@@ -1,1 +1,1 @@
-package main
+package golang_two
