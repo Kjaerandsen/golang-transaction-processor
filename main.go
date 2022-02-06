@@ -9,7 +9,7 @@ import (
 
 // Takes flags to run the different functions.
 func main() {
-	generateRandomTxs(5)
+	generateRandomTxs(1000)
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
@@ -32,10 +32,10 @@ func generateRandomTxs(n int) {
 
 	// Generate the n different values
 	for i := 0; i < n; i++ {
-		if i != 1 {
+		if i != 0 {
 			outputString = outputString + "\n"
 		}
-		outputString = outputString + fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/1000)*100)/100)
+		outputString = outputString + fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/100)*100)/100)
 	}
 
 	// Write to the file
