@@ -12,12 +12,14 @@ import (
 // Takes flags to run the different functions.
 func main() {
 	//generateRandomTxs(1000)
+	generateFees()
 	sum()
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
 // with a uniform random distribution, this is written to the file txs.txt
 func generateRandomTxs(n int) {
+	// TODO: Get a random seed going so it is not deterministic
 	var outputString string
 	// Check if the input number is one or greater.
 	if n < 1 {
@@ -86,7 +88,47 @@ func sum() {
 
 // Reads the txs.txt file, generates fees for each row and puts them into the fees.txt file with the same structure.
 func generateFees() {
+	var fee float64
 
+	// Open the input file
+	inputFile, err := os.Open("txs.txt")
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+		return
+	}
+
+	// Open the output file
+	outputFile, err := os.Create("fees.txt")
+	if err != nil {
+		fmt.Println("Error accessing fees.txt file.")
+		return
+	}
+	// Close the file after used
+	defer outputFile.Close()
+
+	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
+	scanner := bufio.NewScanner(inputFile)
+
+	scanner.Split(bufio.ScanLines)
+
+	// For each line generate the fee (30%)
+	for scanner.Scan() {
+		// Add the line to the fee value, if invalid input return an error
+		fee, err = strconv.ParseFloat(scanner.Text(), 32)
+		if err != nil {
+			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
+				" a valid file.")
+			return
+		}
+		// Calculate the fee
+		fee = math.Round(fee*0.30*100) / 100
+		// Add it to the output document
+		_, err = outputFile.WriteString(fmt.Sprintf("%v\n", fee))
+		if err != nil {
+			fmt.Println("Error writing to txs.txt file.")
+			return
+		}
+	}
 }
 
 // Calculates the earnings of the app provider (70%) and puts it into the earnings.txt file.
