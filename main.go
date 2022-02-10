@@ -11,10 +11,11 @@ import (
 
 // Takes flags to run the different functions.
 func main() {
-	//generateRandomTxs(1000)
+	generateRandomTxs(1000)
 	generateFees()
 	sum()
 	earnings()
+	compare()
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
@@ -179,7 +180,94 @@ func earnings() {
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
 func compare() {
+	var FEES_SUM float64
+	var FEES_TOTAL float64
+	var TOTAL_EARNINGS float64
+	var inputVal float64
 
+	// Open the input file
+	inputFile, err := os.Open("fees.txt")
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+		return
+	}
+
+	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
+	scanner := bufio.NewScanner(inputFile)
+
+	scanner.Split(bufio.ScanLines)
+
+	// For each line add the fee
+	for scanner.Scan() {
+		// Add the line to the inputVal, if invalid input return an error
+		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
+		if err != nil {
+			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
+				" a valid file.")
+			return
+		}
+		// Add the fee to the total
+		FEES_SUM += math.Round(inputVal*0.70*100) / 100
+	}
+	// Close the file after used
+	inputFile.Close()
+
+	// Open the input file
+	inputFile, err = os.Open("txs.txt")
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+		return
+	}
+
+	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
+	scanner = bufio.NewScanner(inputFile)
+
+	scanner.Split(bufio.ScanLines)
+
+	// For each line add the fee
+	for scanner.Scan() {
+		// Add the line to the inputVal, if invalid input return an error
+		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
+		if err != nil {
+			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
+				" a valid file.")
+			return
+		}
+		// Add the fee to the total
+		FEES_TOTAL += math.Round(inputVal*0.70*100) / 100
+	}
+	// Close the file after used
+	inputFile.Close()
+
+	// Open the input file
+	inputFile, err = os.Open("earnings.txt")
+	if err != nil {
+		fmt.Println("Error accessing earnings.txt file.")
+		return
+	}
+
+	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
+	scanner = bufio.NewScanner(inputFile)
+
+	scanner.Split(bufio.ScanLines)
+
+	// For each line add the fee
+	for scanner.Scan() {
+		// Add the line to the inputVal, if invalid input return an error
+		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
+		if err != nil {
+			fmt.Println("Error: earnings.txt contains invalid values. Please refer to documentation to generate" +
+				" a valid file.")
+			return
+		}
+		// Add the fee to the total
+		FEES_SUM += math.Round(inputVal*0.70*100) / 100
+	}
+	// Close the file after used
+	inputFile.Close()
+
+	fmt.Println(math.Round((FEES_SUM-FEES_TOTAL)*100) / 100)                  // Number 1
+	fmt.Println(math.Round((FEES_TOTAL-(TOTAL_EARNINGS-FEES_SUM))*100) / 100) // Number 2
 }
 
 // Same as generateRandomTxs, but for a million values.
