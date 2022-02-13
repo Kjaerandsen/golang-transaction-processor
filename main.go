@@ -33,9 +33,6 @@ func main() {
 	// Parse the flags
 	flag.Parse()
 
-	//defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
-	//defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
-
 	rand.Seed(time.Now().UnixNano())
 
 	if *help {
@@ -62,7 +59,7 @@ func main() {
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
 		generateMillionTxs()
 		number1, number2 := compare()
-		fmt.Println(number1, number2)
+		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
 	}
 
@@ -79,17 +76,17 @@ func main() {
 	}
 
 	if *sumt {
-		fmt.Println(sum())
+		fmt.Println("Sum: ", sum())
 	}
 
 	if *comp {
 		number1, number2 := compare()
-		fmt.Println(number1, number2)
+		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 	}
 
 	// Print the time the program took to execute if the perf flag is used
 	if *perf {
-		fmt.Println(time.Since(timeStart))
+		fmt.Println("Time to run: ", time.Since(timeStart))
 	}
 }
 
