@@ -9,52 +9,36 @@ func TestGenerateRandomTxs(t *testing.T) {
 	rand.Seed(1099293902193012)
 	generateRandomTxs(1000)
 	hash := generateFileHash("txs.txt")
-	if hash != "&{[1053271813 2703628384 378130007 3008585538 1052052335 2538720549 704867873 2417958192] "+
-		"[48 51 53 48 50 49 46 56 56 55 56 46 57 52 51 52 46 57 52 57 48 46 52 53 56 50 46 53 55 55 46 56 50 "+
-		"50 48 46 54 50 52 46 55 51 55 56 46 53 52 51 48 46 56 56 53 54 46 55 52 53 48 46 57 53 55 46] 19 4755 "+
-		"false}" {
+	if hash != "[25 101 25 210 24 41 237 196 131 223 145 95 222 23 223 88 5 47 143"+
+		" 244 10 47 32 8 116 104 56 191 220 138 227 18]" {
 		t.Error("testGenerateRandomTxs did not generate the expected output.")
 	}
 }
 
 func TestSum(t *testing.T) {
 	sum()
-	hash := generateFileHash("txs.txt")
-	if hash != "&{[1053271813 2703628384 378130007 3008585538 1052052335 2538720549 704867873 2417958192] [48 51 53 "+
-		"48 50 49 46 56 56 55 56 46 57 52 51 52 46 57 52 57 48 46 52 53 56 50 46 53 55 55 46 56 50 50 48 46 54 50 52 "+
-		"46 55 51 55 56 46 53 52 51 48 46 56 56 53 54 46 55 52 53 48 46 57 53 55 46] 19 4755 false}" {
-		t.Error("testGenerateRandomTxs did not generate the expected output.")
-	}
 }
 
 func TestGenerateFees(t *testing.T) {
 	generateFees()
-	hash := generateFileHash("txs.txt")
-	if hash != "&{[1053271813 2703628384 378130007 3008585538 1052052335 2538720549 704867873 2417958192] [48 51 "+
-		"53 48 50 49 46 56 56 55 56 46 57 52 51 52 46 57 52 57 48 46 52 53 56 50 46 53 55 55 46 56 50 50 48 46 54 50 "+
-		"52 46 55 51 55 56 46 53 52 51 48 46 56 56 53 54 46 55 52 53 48 46 57 53 55 46] 19 4755 false}" {
+	hash := generateFileHash("fees.txt")
+	if hash != "[70 69 106 47 141 60 69 60 139 100 224 240 112 192 188 92 36 205 62"+
+		" 122 158 245 29 211 30 82 48 5 246 67 10 211]" {
 		t.Error("testGenerateRandomTxs did not generate the expected output.")
 	}
 }
 
 func TestEarnings(t *testing.T) {
 	earnings()
-	hash := generateFileHash("txs.txt")
-	if hash != "&{[1053271813 2703628384 378130007 3008585538 1052052335 2538720549 704867873 2417958192] [48 51 53 "+
-		"48 50 49 46 56 56 55 56 46 57 52 51 52 46 57 52 57 48 46 52 53 56 50 46 53 55 55 46 56 50 50 48 46 54 50 52 "+
-		"46 55 51 55 56 46 53 52 51 48 46 56 56 53 54 46 55 52 53 48 46 57 53 55 46] 19 4755 false}" {
+	hash := generateFileHash("earnings.txt")
+	if hash != "[56 152 172 165 80 53 143 160 229 77 1 149 63 90 106 174 255 208 207"+
+		" 35 219 207 202 212 19 253 242 175 229 159 31 157]" {
 		t.Error("testGenerateRandomTxs did not generate the expected output.")
 	}
 }
 
 func TestCompare(t *testing.T) {
 	compare()
-	hash := generateFileHash("txs.txt")
-	if hash != "&{[1053271813 2703628384 378130007 3008585538 1052052335 2538720549 704867873 2417958192] [48 51 "+
-		"53 48 50 49 46 56 56 55 56 46 57 52 51 52 46 57 52 57 48 46 52 53 56 50 46 53 55 55 46 56 50 50 48 46 54 "+
-		"50 52 46 55 51 55 56 46 53 52 51 48 46 56 56 53 54 46 55 52 53 48 46 57 53 55 46] 19 4755 false}" {
-		t.Error("testGenerateRandomTxs did not generate the expected output.")
-	}
 }
 
 func TestGenerateMillionTXs(t *testing.T) {

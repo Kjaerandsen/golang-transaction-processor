@@ -317,17 +317,16 @@ func generateFileHash(filename string) string {
 	// Create the sha256 hash
 	fileHash := sha256.New()
 
-	// Read line by line and calculate the filehash
+	// Read line by line and calculate the fileHash
 	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
 	scanner := bufio.NewScanner(inputFile)
 
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-		// Add the line to the sum
-		// Add the line to the add value, if invalid input return an error
+		// Add the line to the fileHash
 		fileHash.Write([]byte(scanner.Text()))
 	}
 
-	return fmt.Sprintf("%v", fileHash)
+	return fmt.Sprintf("%v", fileHash.Sum(nil))
 }
