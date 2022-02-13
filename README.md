@@ -61,7 +61,8 @@ Then using golang profiling i noted the following:
 - earnings:           Took around 3 seconds, heavily bottlenecked by input output and system calls.
 - comp:               Took around 300 milliseconds, mostly bottlenecked by string functions, cpu and memory allocation. Fast enough.
 
-Seconds round of optimizations then focused on buffering the output, so instead of writing line by line, one float at a time i buffered 100 floats together in a string and then wrote that to the file. This reduced the runtime to around 400-500 milliseconds.
+Seconds round of optimizations then focused on buffering the output, so instead of writing line by line, one float at a time i buffered 100 floats together in a string and then wrote that to the file. This reduced the runtime to around 400-500 milliseconds. Which i found acceptable.
+If i were to improve it further i would probably look into setting predefined variable sizes and using more basic containers for the buffering to reduce the amount of time spent reallocating memory for the string functions.
 
 ## Time-tracking notes:
 Issues, time estimated and time spent:
