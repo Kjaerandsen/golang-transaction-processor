@@ -12,6 +12,8 @@ import (
 
 // Takes flags to run the different functions.
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	timeStart := time.Now()
 	generateRandomTxs(1000)
 	fmt.Println(time.Since(timeStart))
@@ -29,15 +31,14 @@ func main() {
 	fmt.Println(time.Since(timeStart))
 	timeStart = time.Now()
 
-	//generateMillionTxs()
-	//fmt.Println(time.Since(timeStart))
-	//timeStart = time.Now()
+	generateMillionTxs()
+	fmt.Println(time.Since(timeStart))
+	timeStart = time.Now()
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
 // with a uniform random distribution, this is written to the file txs.txt
 func generateRandomTxs(n int) {
-	// TODO: Get a random seed going so it is not deterministic
 	var outputString string
 	// Check if the input number is one or greater.
 	if n < 1 {
@@ -287,7 +288,6 @@ func compare() {
 
 // Same as generateRandomTxs, but for a million values.
 func generateMillionTxs() {
-	var outputString string
 
 	outputFile, err := os.Create("txs.txt")
 	if err != nil {
@@ -299,12 +299,9 @@ func generateMillionTxs() {
 
 	// Generate a million different values
 	for i := 0; i < 1000000; i++ {
-		if i != 0 {
-			outputString = outputString + "\n"
-		}
 		// Write to the file
-		_, err = outputFile.WriteString(outputString +
-			fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/100)*100)/100))
+		_, err = outputFile.WriteString(
+			fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100))
 		if err != nil {
 			fmt.Println("Error writing to txs.txt file.")
 			return
