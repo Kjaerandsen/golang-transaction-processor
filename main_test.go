@@ -49,7 +49,7 @@ func TestEarnings(t *testing.T) {
 // Tests the compare function with a predefined input checking if it gives the expected output
 func TestCompare(t *testing.T) {
 	number1, number2 := compare()
-	if number1 != -0.04 || number2 != 71335 {
+	if number1 != 0.06 || number2 != 30572.3 {
 		t.Error("testCompare did not generate the expected output.")
 	}
 }
