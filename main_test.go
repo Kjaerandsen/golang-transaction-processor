@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+// Tests the generateRandomTxs function by running it with a fixed seed
+// and testing the outputfile hash for integrity of the output
 func TestGenerateRandomTxs(t *testing.T) {
 	rand.Seed(1099293902193012)
 	generateRandomTxs(1000)
@@ -15,12 +17,15 @@ func TestGenerateRandomTxs(t *testing.T) {
 	}
 }
 
+// Tests the sum function by checking if a predefined input gives the expected output
 func TestSum(t *testing.T) {
 	if sum() != 50953.66 {
 		t.Error("testSum did not generate the expected output.")
 	}
 }
 
+// Tests the generateFees function by checking if a predefined input gives the expected output
+// which is tested using a hash of the contents of the output file
 func TestGenerateFees(t *testing.T) {
 	generateFees()
 	hash := generateFileHash("fees.txt")
@@ -30,6 +35,8 @@ func TestGenerateFees(t *testing.T) {
 	}
 }
 
+// Tests the earnings function by checking if a predefined input gives the expected output
+// which is tested using a hash of the contents of the output file
 func TestEarnings(t *testing.T) {
 	earnings()
 	hash := generateFileHash("earnings.txt")
@@ -39,6 +46,7 @@ func TestEarnings(t *testing.T) {
 	}
 }
 
+// Tests the compare function with a predefined input checking if it gives the expected output
 func TestCompare(t *testing.T) {
 	number1, number2 := compare()
 	if number1 != -0.04 || number2 != 71335 {
@@ -46,6 +54,8 @@ func TestCompare(t *testing.T) {
 	}
 }
 
+// Tests the generateMillionTxs function by checking if a predefined input gives the expected output
+// which is tested using a hash of the contents of the output file
 func TestGenerateMillionTxs(t *testing.T) {
 	rand.Seed(1099293902193012)
 	hash := generateFileHash("txs.txt")
