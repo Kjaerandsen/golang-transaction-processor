@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/sha256"
 	"flag"
 	"fmt"
 	"github.com/pkg/profile"
+	"io"
 	"math"
 	"math/rand"
 	"os"
@@ -168,6 +170,9 @@ func sum() float64 {
 // Reads the txs.txt file, generates fees for each row and puts them into the fees.txt file with the same structure.
 func generateFees() {
 	var fee float64
+	var output string
+	bufferSize := 100
+	lineBuffer := 0
 
 	// Open the input file
 	inputFile, err := os.Open("txs.txt")
@@ -175,6 +180,26 @@ func generateFees() {
 		fmt.Println("Error accessing txs.txt file.")
 		return
 	}
+
+	// Count the number of lines
+	lineCount, err := lineCounter(inputFile)
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+	}
+	if lineCount < bufferSize {
+		bufferSize = lineCount
+	}
+	fmt.Println(bufferSize)
+	inputFile.Close()
+
+	// Open the input file again to read from the start
+	inputFile, err = os.Open("txs.txt")
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+		return
+	}
+
+	defer inputFile.Close()
 
 	// Open the output file
 	outputFile, err := os.Create("fees.txt")
@@ -189,7 +214,6 @@ func generateFees() {
 	scanner := bufio.NewScanner(inputFile)
 
 	scanner.Split(bufio.ScanLines)
-
 	// For each line generate the fee (30%)
 	for scanner.Scan() {
 		// Add the line to the fee value, if invalid input return an error
@@ -201,11 +225,23 @@ func generateFees() {
 		}
 		// Calculate the fee
 		fee = math.Round(fee*0.30*100) / 100
-		// Add it to the output document
-		_, err = outputFile.WriteString(fmt.Sprintf("%v\n", fee))
-		if err != nil {
-			fmt.Println("Error writing to fees.txt file.")
-			return
+		// Add it to the output buffer
+		output = output + fmt.Sprintf("%v\n", fee)
+		lineBuffer = lineBuffer + 1
+		if lineBuffer == bufferSize {
+			// Add it to the output document
+			_, err = outputFile.WriteString(output)
+			if err != nil {
+				fmt.Println("Error writing to fees.txt file.")
+				return
+			}
+			// Resets the buffer, and sets it size to the smallest value between lineCount (lines left) or 100.
+			lineCount -= lineBuffer
+			lineBuffer = 0
+			output = ""
+			if lineCount < bufferSize {
+				bufferSize = lineCount
+			}
 		}
 	}
 }
@@ -334,4 +370,25 @@ func readFileAndSumLines(filename string) float64 {
 	}
 
 	return totalSum
+}
+
+// Function that counts lines, retrieved from:
+// https://stackoverflow.com/questions/24562942/golang-how-do-i-determine-the-number-of-lines-in-a-file-efficiently
+func lineCounter(r io.Reader) (int, error) {
+	buf := make([]byte, 32*1024)
+	count := 0
+	lineSep := []byte{'\n'}
+
+	for {
+		c, err := r.Read(buf)
+		count += bytes.Count(buf[:c], lineSep)
+
+		switch {
+		case err == io.EOF:
+			return count, nil
+
+		case err != nil:
+			return count, err
+		}
+	}
 }
