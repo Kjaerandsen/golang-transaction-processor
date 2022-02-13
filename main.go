@@ -310,7 +310,6 @@ func generateMillionTxs() {
 
 // Generates a filehash from the input filename and returns it as a string
 func generateFileHash(filename string) string {
-	var inputVal float64
 	inputFile, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("Error accessing " + filename + " file.")
