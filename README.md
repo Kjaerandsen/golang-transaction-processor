@@ -64,5 +64,19 @@ Then using golang profiling i noted the following:
 Seconds round of optimizations then focused on buffering the output, so instead of writing line by line, one float at a time i buffered 100 floats together in a string and then wrote that to the file. This reduced the runtime to around 400-500 milliseconds.
 
 ## Time-tracking notes:
+Issues, time estimated and time spent:
+1. Basic setup / outline of the application: Estimated 30m, spent 14m.
+2. sum function:                             Estimated 30m, spent 17m.
+3. generateFees function:                    Estimated 30m, spent 12m.
+4. earnings function:                        Estimated 30m, spent 5m.
+5. generateRandomTxs:                        Estimated 2h, spent 1h.
+6. Performance profiling and optimizations:  Estimated 2h, spent 1h 25m.
+7. compare function:                         Estimated 1h, spent 29m.
+8. generateMillionTxs:                       Estimated 2h, spent 15m.
+9. Unit tests:                               Estimated 1h, spent 1h 10m.
+10. Documentation:                           Estimated 1h, spent 45m.
+11. main function with flag implementation:  Estimated 30m, spent 30m.
 
+Total time estimate: 11h 30m
+Total time spent: 6h 22m
 The estimated difficulty was pretty accurate, but i was too lenient on the time estimates.
