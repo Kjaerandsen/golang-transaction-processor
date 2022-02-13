@@ -189,7 +189,6 @@ func generateFees() {
 	if lineCount < bufferSize {
 		bufferSize = lineCount
 	}
-	fmt.Println(bufferSize)
 	inputFile.Close()
 
 	// Open the input file again to read from the start
@@ -249,6 +248,9 @@ func generateFees() {
 // Calculates the earnings of the app provider (70%) and puts it into the earnings.txt file.
 func earnings() {
 	var profit float64
+	var output string
+	bufferSize := 100
+	lineBuffer := 0
 
 	// Open the input file
 	inputFile, err := os.Open("txs.txt")
@@ -256,6 +258,25 @@ func earnings() {
 		fmt.Println("Error accessing txs.txt file.")
 		return
 	}
+
+	// Count the number of lines
+	lineCount, err := lineCounter(inputFile)
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+	}
+	if lineCount < bufferSize {
+		bufferSize = lineCount
+	}
+	inputFile.Close()
+
+	// Open the input file again to read from the start
+	inputFile, err = os.Open("txs.txt")
+	if err != nil {
+		fmt.Println("Error accessing txs.txt file.")
+		return
+	}
+
+	defer inputFile.Close()
 
 	// Open the output file
 	outputFile, err := os.Create("earnings.txt")
@@ -281,12 +302,24 @@ func earnings() {
 			return
 		}
 		// Calculate the earnings
-		profit = math.Round(profit*0.70*100) / 100
-		// Add it to the output document
-		_, err = outputFile.WriteString(fmt.Sprintf("%v\n", profit))
-		if err != nil {
-			fmt.Println("Error writing to earnings.txt file.")
-			return
+		profit = math.Round(profit*70) / 100
+		// Add it to the output buffer
+		output = output + fmt.Sprintf("%v\n", profit)
+		lineBuffer = lineBuffer + 1
+		if lineBuffer == bufferSize {
+			// Add it to the output document
+			_, err = outputFile.WriteString(output)
+			if err != nil {
+				fmt.Println("Error writing to earnings.txt file.")
+				return
+			}
+			// Resets the buffer, and sets it size to the smallest value between lineCount (lines left) or 100.
+			lineCount -= lineBuffer
+			lineBuffer = 0
+			output = ""
+			if lineCount < bufferSize {
+				bufferSize = lineCount
+			}
 		}
 	}
 }
