@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"crypto/sha256"
+	"flag"
 	"fmt"
 	"github.com/pkg/profile"
 	"math"
@@ -14,30 +15,100 @@ import (
 
 // Takes flags to run the different functions.
 func main() {
-	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+	timeStart := time.Now()
+	// Flag implementation:
+	perf := flag.Bool("perf", false, "Time the execution of the program.")
+	fees := flag.Bool("fees", false, "Run the generateFees function.")
+	earn := flag.Bool("earn", false, "Run the earnings function.")
+	comp := flag.Bool("comp", false, "Run the compare function.")
+	prof := flag.Bool("prof", false, "Profile the execution of the program.")
+	help := flag.Bool("help", false, "Print out the available functions.")
+	sumt := flag.Bool("sum", false, "Run the sumt function.")
+	genm := flag.Bool("genm", false, "Run the generateMillionTxs function.")
+
+	// For the generate flag
+	var genValue int
+	flag.IntVar(&genValue, "gen", 0, "Run the generateRandomTxs function with x transactions.")
+
+	if *prof {
+		defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+		defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
+	}
 
 	rand.Seed(time.Now().UnixNano())
 
-	timeStart := time.Now()
-	generateRandomTxs(1000)
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	generateFees()
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	fmt.Println(sum())
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	earnings()
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	number1, number2 := compare()
-	fmt.Println(number1, number2)
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	generateMillionTxs()
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
+	if *help {
+		fmt.Println("This program uses flags to run the different commands, the following flags are availablle:\n" +
+			"-perf : Time the execution of the program.\n" +
+			"-fees : Calculates the fees (transactions * 30%) and outputs them into fees.txt\n" +
+			"-earn : Calculates the earnings (transactions - 30% fees) and outputs them into earnings.txt\n" +
+			"-comp : Calculates and prints out Number1 and Number2 (as specified in the readme)\n" +
+			"-prof : Enables performance profiling for the application\n" +
+			"-sumt  : Calculates the sum of all transactions and prints it out.\n" +
+			"-help : Outputs this message\n" +
+			"-gen x: Generate x transactions, one per line to the txs.txt file\n" +
+			"-genm : Generates a million transactions, one per line to the txs.txt file\n" +
+			"Running with no parameters generates a million transactions to txs.txt and runs the comp flag.")
+	}
+
+	// If invalid ignore the flag
+	if genValue != 0 && genValue < 0 {
+		genValue = 0
+	} else {
+		generateRandomTxs(genValue)
+	}
+
+	// If no flags run the generateMillionTxs function, compare function and show that the help parameter is available
+	if !*prof && !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
+		generateMillionTxs()
+		number1, number2 := compare()
+		fmt.Println(number1, number2)
+		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
+	}
+
+	if *fees {
+		generateFees()
+	}
+
+	if *earn {
+		earnings()
+	}
+
+	if *sumt {
+		fmt.Println(sum())
+	}
+
+	if *comp {
+		number1, number2 := compare()
+		fmt.Println(number1, number2)
+	}
+
+	/*
+		generateRandomTxs(1000000)
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		generateFees()
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		fmt.Println(sum())
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		earnings()
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		number1, number2 := compare()
+		fmt.Println(number1, number2)
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		generateMillionTxs()
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+	*/
+
+	// Print the time the program took to execute if the perf flag is used
+	if *perf {
+		fmt.Println(time.Since(timeStart))
+	}
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
