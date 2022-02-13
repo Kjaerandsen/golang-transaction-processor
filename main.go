@@ -56,10 +56,7 @@ func generateRandomTxs(n int) {
 
 	// Generate the n different values
 	for i := 0; i < n; i++ {
-		if i != 0 {
-			outputString = outputString + "\n"
-		}
-		outputString = outputString + fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/100)*100)/100)
+		outputString = outputString + fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100)
 	}
 
 	// Write to the file
