@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
-	"github.com/pkg/profile"
 	"io"
 	"math"
 	"math/rand"
@@ -24,14 +23,17 @@ func main() {
 	earn := flag.Bool("earn", false, "Run the earnings function.")
 	comp := flag.Bool("comp", false, "Run the compare function.")
 	help := flag.Bool("help", false, "Print out the available functions.")
-	sumt := flag.Bool("sum", false, "Run the sumt function.")
+	sumt := flag.Bool("sumt", false, "Run the sumt function.")
 	genm := flag.Bool("genm", false, "Run the generateMillionTxs function.")
 
 	// For the generate flag
 	var genValue int
 	flag.IntVar(&genValue, "gen", 0, "Run the generateRandomTxs function with x transactions.")
 
-	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+	// Parse the flags
+	flag.Parse()
+
+	//defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
 	//defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
 
 	rand.Seed(time.Now().UnixNano())
@@ -380,7 +382,7 @@ func readFileAndSumLines(filename string) float64 {
 }
 
 // Function that counts lines, retrieved from:
-// https://stackoverflow.com/questions/24562942/golang-how-do-i-determine-the-number-of-lines-in-a-file-efficiently
+// git
 func lineCounter(r io.Reader) (int, error) {
 	buf := make([]byte, 32*1024)
 	count := 0
