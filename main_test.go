@@ -16,7 +16,9 @@ func TestGenerateRandomTxs(t *testing.T) {
 }
 
 func TestSum(t *testing.T) {
-	sum()
+	if sum() != 50953.66 {
+		t.Error("testSum did not generate the expected output.")
+	}
 }
 
 func TestGenerateFees(t *testing.T) {
@@ -38,7 +40,10 @@ func TestEarnings(t *testing.T) {
 }
 
 func TestCompare(t *testing.T) {
-	compare()
+	number1, number2 := compare()
+	if number1 != -0.04 || number2 != 71335 {
+		t.Error("testCompare did not generate the expected output.")
+	}
 }
 
 func TestGenerateMillionTXs(t *testing.T) {
