@@ -172,16 +172,16 @@ func earnings() {
 
 	scanner.Split(bufio.ScanLines)
 
-	// For each line generate the fee (30%)
+	// For each line generate the earnings (70%)
 	for scanner.Scan() {
-		// Add the line to the fee value, if invalid input return an error
+		// Add the line to the profit value, if invalid input return an error
 		profit, err = strconv.ParseFloat(scanner.Text(), 32)
 		if err != nil {
 			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
 				" a valid file.")
 			return
 		}
-		// Calculate the fee
+		// Calculate the earnings
 		profit = math.Round(profit*0.70*100) / 100
 		// Add it to the output document
 		_, err = outputFile.WriteString(fmt.Sprintf("%v\n", profit))
@@ -211,7 +211,7 @@ func compare() {
 
 	scanner.Split(bufio.ScanLines)
 
-	// For each line add the fee
+	// For each line read the value
 	for scanner.Scan() {
 		// Add the line to the inputVal, if invalid input return an error
 		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
@@ -238,7 +238,7 @@ func compare() {
 
 	scanner.Split(bufio.ScanLines)
 
-	// For each line add the fee
+	// For each line read the value
 	for scanner.Scan() {
 		// Add the line to the inputVal, if invalid input return an error
 		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
@@ -265,7 +265,7 @@ func compare() {
 
 	scanner.Split(bufio.ScanLines)
 
-	// For each line add the fee
+	// For each line read the value
 	for scanner.Scan() {
 		// Add the line to the inputVal, if invalid input return an error
 		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
@@ -307,6 +307,7 @@ func generateMillionTxs() {
 
 }
 
+// Generates a filehash from the input filename and returns it as a string
 func generateFileHash(filename string) string {
 	inputFile, err := os.Open(filename)
 	if err != nil {
