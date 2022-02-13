@@ -310,6 +310,7 @@ func generateMillionTxs() {
 
 // Generates a filehash from the input filename and returns it as a string
 func generateFileHash(filename string) string {
+	var inputVal float64
 	inputFile, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("Error accessing " + filename + " file.")
@@ -326,8 +327,15 @@ func generateFileHash(filename string) string {
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
+		// The input value is converted to a float, then later to string again to ignore all os specific line endings.
+		inputVal, err := strconv.ParseFloat(scanner.Text(), 32)
+		if err != nil {
+			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
+				" a valid file.")
+			return ""
+		}
 		// Add the line to the fileHash
-		fileHash.Write([]byte(scanner.Text()))
+		fileHash.Write([]byte(fmt.Sprintf("%v", inputVal)))
 	}
 
 	return fmt.Sprintf("%v", fileHash.Sum(nil))
