@@ -21,7 +21,6 @@ func main() {
 	fees := flag.Bool("fees", false, "Run the generateFees function.")
 	earn := flag.Bool("earn", false, "Run the earnings function.")
 	comp := flag.Bool("comp", false, "Run the compare function.")
-	prof := flag.Bool("prof", false, "Profile the execution of the program.")
 	help := flag.Bool("help", false, "Print out the available functions.")
 	sumt := flag.Bool("sum", false, "Run the sumt function.")
 	genm := flag.Bool("genm", false, "Run the generateMillionTxs function.")
@@ -30,10 +29,8 @@ func main() {
 	var genValue int
 	flag.IntVar(&genValue, "gen", 0, "Run the generateRandomTxs function with x transactions.")
 
-	if *prof {
-		defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
-		defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
-	}
+	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+	//defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -43,7 +40,6 @@ func main() {
 			"-fees : Calculates the fees (transactions * 30%) and outputs them into fees.txt\n" +
 			"-earn : Calculates the earnings (transactions - 30% fees) and outputs them into earnings.txt\n" +
 			"-comp : Calculates and prints out Number1 and Number2 (as specified in the readme)\n" +
-			"-prof : Enables performance profiling for the application\n" +
 			"-sumt  : Calculates the sum of all transactions and prints it out.\n" +
 			"-help : Outputs this message\n" +
 			"-gen x: Generate x transactions, one per line to the txs.txt file\n" +
@@ -59,7 +55,7 @@ func main() {
 	}
 
 	// If no flags run the generateMillionTxs function, compare function and show that the help parameter is available
-	if !*prof && !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
+	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
 		generateMillionTxs()
 		number1, number2 := compare()
 		fmt.Println(number1, number2)
