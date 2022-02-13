@@ -44,7 +44,7 @@ func main() {
 			"-comp  : Calculates and prints out Number1 and Number2 (as specified in the readme)\n" +
 			"-sumt  : Calculates the sum of all transactions and prints it out.\n" +
 			"-help  : Outputs this message\n" +
-			"-gen x : Generate x transactions, one per line to the txs.txt file\n" +
+			"-gen=x : Generate x transactions, one per line to the txs.txt file\n" +
 			"-genm  : Generates a million transactions, one per line to the txs.txt file\n" +
 			"Running with no parameters generates a million transactions to txs.txt and runs the comp flag.")
 	}
@@ -135,33 +135,7 @@ func generateRandomTxs(n int) {
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
 func sum() float64 {
-	var sum float64
-	var add float64
-
-	// Open the file
-	inputFile, err := os.Open("txs.txt")
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-		return 0
-	}
-
-	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
-	scanner := bufio.NewScanner(inputFile)
-
-	scanner.Split(bufio.ScanLines)
-
-	for scanner.Scan() {
-		// Add the line to the sum
-		// Add the line to the add value, if invalid input return an error
-		add, err = strconv.ParseFloat(scanner.Text(), 32)
-		if err != nil {
-			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
-				" a valid file.")
-			return 0
-		}
-		// Add the add value to the sum
-		sum = sum + add
-	}
+	sum := readFileAndSumLines("txs.txt")
 
 	// Print the result
 	return (math.Round(sum * 100)) / 100
