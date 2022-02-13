@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/sha256"
 	"fmt"
+	"github.com/pkg/profile"
 	"math"
 	"math/rand"
 	"os"
@@ -13,26 +14,29 @@ import (
 
 // Takes flags to run the different functions.
 func main() {
+	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+
 	rand.Seed(time.Now().UnixNano())
 
 	timeStart := time.Now()
-	generateRandomTxs(1000)
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	generateFees()
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	fmt.Println(sum())
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	earnings()
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-	number1, number2 := compare()
-	fmt.Println(number1, number2)
-	fmt.Println(time.Since(timeStart))
-	timeStart = time.Now()
-
+	/*
+		generateRandomTxs(1000)
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		generateFees()
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		fmt.Println(sum())
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		earnings()
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+		number1, number2 := compare()
+		fmt.Println(number1, number2)
+		fmt.Println(time.Since(timeStart))
+		timeStart = time.Now()
+	*/
 	generateMillionTxs()
 	fmt.Println(time.Since(timeStart))
 	timeStart = time.Now()
@@ -58,7 +62,13 @@ func generateRandomTxs(n int) {
 
 	// Generate the n different values
 	for i := 0; i < n; i++ {
-		outputString = outputString + fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100)
+		// Write to the file
+		_, err = outputFile.WriteString(
+			fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100))
+		if err != nil {
+			fmt.Println("Error writing to txs.txt file.")
+			return
+		}
 	}
 
 	// Write to the file
