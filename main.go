@@ -7,16 +7,31 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"time"
 )
 
 // Takes flags to run the different functions.
 func main() {
+	timeStart := time.Now()
 	generateRandomTxs(1000)
+	fmt.Println(time.Since(timeStart))
+	timeStart = time.Now()
 	generateFees()
+	fmt.Println(time.Since(timeStart))
+	timeStart = time.Now()
 	sum()
+	fmt.Println(time.Since(timeStart))
+	timeStart = time.Now()
 	earnings()
+	fmt.Println(time.Since(timeStart))
+	timeStart = time.Now()
 	compare()
-	generateMillionTxs()
+	fmt.Println(time.Since(timeStart))
+	timeStart = time.Now()
+
+	//generateMillionTxs()
+	//fmt.Println(time.Since(timeStart))
+	//timeStart = time.Now()
 }
 
 // Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
@@ -73,7 +88,6 @@ func sum() {
 
 	for scanner.Scan() {
 		// Add the line to the sum
-		fmt.Println(scanner.Text())
 		// Add the line to the add value, if invalid input return an error
 		add, err = strconv.ParseFloat(scanner.Text(), 32)
 		if err != nil {
@@ -283,18 +297,18 @@ func generateMillionTxs() {
 	// Close the file after used
 	defer outputFile.Close()
 
-	// Generate the a million different values
+	// Generate a million different values
 	for i := 0; i < 1000000; i++ {
 		if i != 0 {
 			outputString = outputString + "\n"
 		}
-		outputString = outputString + fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/100)*100)/100)
+		// Write to the file
+		_, err = outputFile.WriteString(outputString +
+			fmt.Sprintf("%v", math.Round((float64(rand.Intn(9999))/100)*100)/100))
+		if err != nil {
+			fmt.Println("Error writing to txs.txt file.")
+			return
+		}
 	}
 
-	// Write to the file
-	_, err = outputFile.WriteString(outputString)
-	if err != nil {
-		fmt.Println("Error writing to txs.txt file.")
-		return
-	}
 }
