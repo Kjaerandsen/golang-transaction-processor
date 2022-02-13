@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"crypto/sha256"
 	"fmt"
 	"math"
 	"math/rand"
@@ -285,7 +286,6 @@ func compare() {
 
 // Same as generateRandomTxs, but for a million values.
 func generateMillionTxs() {
-
 	outputFile, err := os.Create("txs.txt")
 	if err != nil {
 		fmt.Println("Error accessing txs.txt file.")
@@ -305,4 +305,29 @@ func generateMillionTxs() {
 		}
 	}
 
+}
+
+func generateFileHash(filename string) string {
+	inputFile, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Error accessing " + filename + " file.")
+		return ""
+	}
+
+	// Create the sha256 hash
+	fileHash := sha256.New()
+
+	// Read line by line and calculate the filehash
+	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
+	scanner := bufio.NewScanner(inputFile)
+
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		// Add the line to the sum
+		// Add the line to the add value, if invalid input return an error
+		fileHash.Write([]byte(scanner.Text()))
+	}
+
+	return fmt.Sprintf("%v", fileHash)
 }
