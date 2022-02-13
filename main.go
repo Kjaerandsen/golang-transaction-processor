@@ -50,11 +50,10 @@ func main() {
 	// If invalid ignore the flag
 	if genValue != 0 && genValue < 0 {
 		genValue = 0
-	} else {
+	} else if genValue != 0 {
 		generateRandomTxs(genValue)
 	}
 
-	// If no flags run the generateMillionTxs function, compare function and show that the help parameter is available
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
 		generateMillionTxs()
 		number1, number2 := compare()
@@ -64,6 +63,10 @@ func main() {
 
 	if *fees {
 		generateFees()
+	}
+
+	if *genm {
+		generateMillionTxs()
 	}
 
 	if *earn {
@@ -78,28 +81,6 @@ func main() {
 		number1, number2 := compare()
 		fmt.Println(number1, number2)
 	}
-
-	/*
-		generateRandomTxs(1000000)
-		fmt.Println(time.Since(timeStart))
-		timeStart = time.Now()
-		generateFees()
-		fmt.Println(time.Since(timeStart))
-		timeStart = time.Now()
-		fmt.Println(sum())
-		fmt.Println(time.Since(timeStart))
-		timeStart = time.Now()
-		earnings()
-		fmt.Println(time.Since(timeStart))
-		timeStart = time.Now()
-		number1, number2 := compare()
-		fmt.Println(number1, number2)
-		fmt.Println(time.Since(timeStart))
-		timeStart = time.Now()
-		generateMillionTxs()
-		fmt.Println(time.Since(timeStart))
-		timeStart = time.Now()
-	*/
 
 	// Print the time the program took to execute if the perf flag is used
 	if *perf {
@@ -336,7 +317,7 @@ func generateFileHash(filename string) string {
 
 // Takes an input filename, and reads the file line by line, adding the number on the line to a total sum
 func readFileAndSumLines(filename string) float64 {
-	var sum float64
+	var totalSum float64
 	var inputVal float64
 	inputFile, err := os.Open(filename)
 	if err != nil {
@@ -361,8 +342,8 @@ func readFileAndSumLines(filename string) float64 {
 			return 0
 		}
 		// Add the fee to the total
-		sum += inputVal
+		totalSum += inputVal
 	}
 
-	return sum
+	return totalSum
 }
