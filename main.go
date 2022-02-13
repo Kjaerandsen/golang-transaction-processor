@@ -36,14 +36,14 @@ func main() {
 
 	if *help {
 		fmt.Println("This program uses flags to run the different commands, the following flags are availablle:\n" +
-			"-perf : Time the execution of the program.\n" +
-			"-fees : Calculates the fees (transactions * 30%) and outputs them into fees.txt\n" +
-			"-earn : Calculates the earnings (transactions - 30% fees) and outputs them into earnings.txt\n" +
-			"-comp : Calculates and prints out Number1 and Number2 (as specified in the readme)\n" +
+			"-perf  : Time the execution of the program.\n" +
+			"-fees  : Calculates the fees (transactions * 30%) and outputs them into fees.txt\n" +
+			"-earn  : Calculates the earnings (transactions - 30% fees) and outputs them into earnings.txt\n" +
+			"-comp  : Calculates and prints out Number1 and Number2 (as specified in the readme)\n" +
 			"-sumt  : Calculates the sum of all transactions and prints it out.\n" +
-			"-help : Outputs this message\n" +
-			"-gen x: Generate x transactions, one per line to the txs.txt file\n" +
-			"-genm : Generates a million transactions, one per line to the txs.txt file\n" +
+			"-help  : Outputs this message\n" +
+			"-gen x : Generate x transactions, one per line to the txs.txt file\n" +
+			"-genm  : Generates a million transactions, one per line to the txs.txt file\n" +
 			"Running with no parameters generates a million transactions to txs.txt and runs the comp flag.")
 	}
 
@@ -54,6 +54,7 @@ func main() {
 		generateRandomTxs(genValue)
 	}
 
+	// If no flags are provided run the default routine
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
 		generateMillionTxs()
 		number1, number2 := compare()
@@ -262,6 +263,10 @@ func compare() (float64, float64) {
 
 // Same as generateRandomTxs, but for a million values.
 func generateMillionTxs() {
+	transactionsLeft := 1000000
+	loopSize := 100
+	var outputString string
+
 	outputFile, err := os.Create("txs.txt")
 	if err != nil {
 		fmt.Println("Error accessing txs.txt file.")
@@ -270,16 +275,44 @@ func generateMillionTxs() {
 	// Close the file after used
 	defer outputFile.Close()
 
-	// Generate a million different values
-	for i := 0; i < 1000000; i++ {
-		// Write to the file
-		_, err = outputFile.WriteString(
-			fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100))
+	// Write 100 lines at a time to reduce the number of system calls
+	for {
+		if transactionsLeft == 0 {
+			break
+		}
+
+		if transactionsLeft < 100 {
+			loopSize = transactionsLeft
+			transactionsLeft = 0
+		} else {
+			transactionsLeft -= 100
+		}
+
+		for i := 0; i < loopSize; i++ {
+			outputString = outputString +
+				fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100)
+		}
+
+		_, err = outputFile.WriteString(outputString)
 		if err != nil {
 			fmt.Println("Error writing to txs.txt file.")
 			return
 		}
+		outputString = ""
 	}
+
+	/*
+		// Generate a million different values
+		for i := 0; i < 1000000; i++ {
+			// Write to the file
+			_, err = outputFile.WriteString(
+				fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100))
+			if err != nil {
+				fmt.Println("Error writing to txs.txt file.")
+				return
+			}
+		}
+	*/
 
 }
 
