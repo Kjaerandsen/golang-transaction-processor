@@ -46,7 +46,11 @@ func TestCompare(t *testing.T) {
 	}
 }
 
-func TestGenerateMillionTXs(t *testing.T) {
+func TestGenerateMillionTxs(t *testing.T) {
 	rand.Seed(1099293902193012)
-
+	hash := generateFileHash("txs.txt")
+	if hash != "[25 101 25 210 24 41 237 196 131 223 145 95 222 23 223 88 5 47 143 "+
+		"244 10 47 32 8 116 104 56 191 220 138 227 18]" {
+		t.Error("testGenerateMillionTxs did not generate the expected output.")
+	}
 }
