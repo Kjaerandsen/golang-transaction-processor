@@ -22,13 +22,14 @@ func main() {
 	generateFees()
 	fmt.Println(time.Since(timeStart))
 	timeStart = time.Now()
-	sum()
+	fmt.Println(sum())
 	fmt.Println(time.Since(timeStart))
 	timeStart = time.Now()
 	earnings()
 	fmt.Println(time.Since(timeStart))
 	timeStart = time.Now()
-	compare()
+	number1, number2 := compare()
+	fmt.Println(number1, number2)
 	fmt.Println(time.Since(timeStart))
 	timeStart = time.Now()
 
@@ -69,7 +70,7 @@ func generateRandomTxs(n int) {
 }
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
-func sum() {
+func sum() float64 {
 	var sum float64
 	var add float64
 
@@ -77,7 +78,7 @@ func sum() {
 	inputFile, err := os.Open("txs.txt")
 	if err != nil {
 		fmt.Println("Error accessing txs.txt file.")
-		return
+		return 0
 	}
 
 	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
@@ -92,14 +93,14 @@ func sum() {
 		if err != nil {
 			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
 				" a valid file.")
-			return
+			return 0
 		}
 		// Add the add value to the sum
 		sum = sum + add
 	}
 
 	// Print the result
-	fmt.Println((math.Round(sum * 100)) / 100)
+	return (math.Round(sum * 100)) / 100
 }
 
 // Reads the txs.txt file, generates fees for each row and puts them into the fees.txt file with the same structure.
@@ -193,7 +194,7 @@ func earnings() {
 }
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
-func compare() {
+func compare() (float64, float64) {
 	var FEES_SUM float64
 	var FEES_TOTAL float64
 	var TOTAL_EARNINGS float64
@@ -203,7 +204,7 @@ func compare() {
 	inputFile, err := os.Open("fees.txt")
 	if err != nil {
 		fmt.Println("Error accessing txs.txt file.")
-		return
+		return 0, 0
 	}
 
 	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
@@ -218,7 +219,7 @@ func compare() {
 		if err != nil {
 			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
 				" a valid file.")
-			return
+			return 0, 0
 		}
 		// Add the fee to the total
 		FEES_SUM += math.Round(inputVal*0.70*100) / 100
@@ -230,7 +231,7 @@ func compare() {
 	inputFile, err = os.Open("txs.txt")
 	if err != nil {
 		fmt.Println("Error accessing txs.txt file.")
-		return
+		return 0, 0
 	}
 
 	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
@@ -245,7 +246,7 @@ func compare() {
 		if err != nil {
 			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
 				" a valid file.")
-			return
+			return 0, 0
 		}
 		// Add the fee to the total
 		FEES_TOTAL += math.Round(inputVal*0.70*100) / 100
@@ -257,7 +258,7 @@ func compare() {
 	inputFile, err = os.Open("earnings.txt")
 	if err != nil {
 		fmt.Println("Error accessing earnings.txt file.")
-		return
+		return 0, 0
 	}
 
 	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
@@ -272,7 +273,7 @@ func compare() {
 		if err != nil {
 			fmt.Println("Error: earnings.txt contains invalid values. Please refer to documentation to generate" +
 				" a valid file.")
-			return
+			return 0, 0
 		}
 		// Add the fee to the total
 		FEES_SUM += math.Round(inputVal*0.70*100) / 100
@@ -280,8 +281,8 @@ func compare() {
 	// Close the file after used
 	inputFile.Close()
 
-	fmt.Println(math.Round((FEES_SUM-FEES_TOTAL)*100) / 100)                  // Number 1
-	fmt.Println(math.Round((FEES_TOTAL-(TOTAL_EARNINGS-FEES_SUM))*100) / 100) // Number 2
+	return math.Round((FEES_SUM-FEES_TOTAL)*100) / 100, // Number 1
+		math.Round((FEES_TOTAL-(TOTAL_EARNINGS-FEES_SUM))*100) / 100 // Number 2
 }
 
 // Same as generateRandomTxs, but for a million values.
