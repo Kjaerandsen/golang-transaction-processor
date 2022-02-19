@@ -147,11 +147,12 @@ func writeToFile(n []int, filename string) error {
 }
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
-func sum() float64 {
+func sum() string {
 	sum := readFileAndSumLines("txs.txt")
 
+	sumString := fmt.Sprintf("%v%s%v", sum/100, ".", sum%100)
 	// Print the result
-	return (math.Round(sum * 100)) / 100
+	return sumString
 }
 
 // Reads the txs.txt file, generates fees for each row and puts them into the fees.txt file with the same structure.
@@ -312,14 +313,14 @@ func earnings() {
 }
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
-func compare() (float64, float64) {
+func compare() (int, int) {
 	feesSum := readFileAndSumLines("fees.txt")
 	total := readFileAndSumLines("txs.txt")
-	feesTotal := total * 0.3
+	feesTotal := total * 3 / 10
 	totalEarnings := readFileAndSumLines("earnings.txt")
 
-	return math.Round((feesSum-feesTotal)*100) / 100, // Number 1
-		math.Round((total-(totalEarnings-feesSum))*100) / 100 // Number 2
+	return feesSum - feesTotal, // Number 1
+		total - (totalEarnings - feesSum) // Number 2
 }
 
 // Same as generateRandomTxs, but for a million values.
@@ -360,10 +361,11 @@ func generateFileHash(filename string) string {
 	return fmt.Sprintf("%v", fileHash.Sum(nil))
 }
 
-// Takes an input filename, and reads the file line by line, adding the number on the line to a total sum
-func readFileAndSumLines(filename string) float64 {
-	var totalSum float64
-	var inputVal float64
+// Takes an input filename, and reads the file line by line, adding the number on the line to a total sum and returns it
+func readFileAndSumLines(filename string) int {
+	var totalSum int
+	var inputString string
+	var inputVal int
 	inputFile, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("Error accessing " + filename + " file.")
@@ -374,14 +376,15 @@ func readFileAndSumLines(filename string) float64 {
 
 	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
 	scanner := bufio.NewScanner(inputFile)
-
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
 		// Add the line to the inputVal, if invalid input return an error
-		inputVal, err = strconv.ParseFloat(scanner.Text(), 32)
+		inputString = scanner.Text()
+		// Remove the dot and convert to integer
+		inputString = strings.Replace(inputString, ".", "", 1)
+		inputVal, err = strconv.Atoi(inputString)
 		if err != nil {
-			// TODO: Edit this error message
 			fmt.Println("Error: " + filename + " contains invalid values. Please refer to documentation" +
 				" to generate a valid file.")
 			return 0
