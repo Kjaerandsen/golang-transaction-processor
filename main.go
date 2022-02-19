@@ -220,13 +220,14 @@ func readFromFile(filename string) ([]int, error) {
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
 func sum() string {
-	sum := readFileAndSumLines("txs.txt")
+	totalSum := readFileAndSumLines("txs.txt")
 
-	sumString := fmt.Sprintf("%v%s%v", sum/100, ".", sum%100)
+	sumString := fmt.Sprintf("%v%s%v", totalSum/100, ".", totalSum%100)
 	// Print the result
 	return sumString
 }
 
+// Reads the txs.txt file calculates 30% fees on each transaction and writes the output to fees.txt
 func generateFees() error {
 	var err error
 	var rounding int
@@ -267,6 +268,7 @@ func generateFees() error {
 	return err
 }
 
+// Reads the txs.txt file and calculates 70% earnings on each transaction, finally writes the output to earnings.txt
 func earnings() error {
 	var earning int
 	var rounding int
@@ -309,11 +311,14 @@ func earnings() error {
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
 func compare() (string, string) {
+	var number1 string
+	var number2 string
 	feesSum := readFileAndSumLines("fees.txt")
 	total := readFileAndSumLines("txs.txt")
 	totalEarnings := readFileAndSumLines("earnings.txt")
 	var test int
 
+	// Rounds the last digit according to bankers rounding
 	totalMod10 := total % 10
 	feesTotal := total * 3
 	if totalMod10 == 5 {
@@ -324,10 +329,22 @@ func compare() (string, string) {
 		feesTotal = feesTotal / 10
 	}
 
+	// If the value is negative, fix the formatting
 	test = feesSum - feesTotal
-	number1 := fmt.Sprintf("%v.%v", test/100, test%100)
+	if test > 0 {
+		number1 = fmt.Sprintf("%v.%v", test/100, test%100)
+	} else {
+		test = -test
+		number1 = fmt.Sprintf("-%v.%v", test/100, test%100)
+	}
+
 	test = total - (totalEarnings + feesSum)
-	number2 := fmt.Sprintf("%v.%v", test/100, test%100)
+	if test > 0 {
+		number2 = fmt.Sprintf("%v.%v", test/100, test%100)
+	} else {
+		test = -test
+		number2 = fmt.Sprintf("-%v.%v", test/100, test%100)
+	}
 
 	return number1, number2
 }
