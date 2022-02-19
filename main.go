@@ -69,7 +69,10 @@ func main() {
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
-		generateFees()
+		err = generateFees2()
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
 		number1, number2 := compare()
 		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
@@ -288,6 +291,31 @@ func generateFees() {
 			}
 		}
 	}
+}
+
+func generateFees2() error {
+	var err error
+
+	transactions, err := readFromFile("txs.txt")
+	if err != nil {
+		fmt.Println("Error reading from txs.txt")
+		return err
+	}
+
+	// Go through the list of transactions
+	for i := 0; i < len(transactions); i++ {
+		// Calculate the earnings
+		transactions[i] = transactions[i] * 30 / 100
+	}
+
+	// write to file
+	err = writeToFile(transactions, "fees.txt")
+	if err != nil {
+		fmt.Println("Error writing to fees.txt")
+		return err
+	}
+
+	return err
 }
 
 // Calculates the earnings of the app provider (70%) and puts it into the earnings.txt file.
