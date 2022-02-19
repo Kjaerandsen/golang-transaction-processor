@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"math"
 	"math/rand"
 	"os"
 	"strconv"
@@ -34,7 +33,7 @@ func main() {
 	// Parse the flags
 	flag.Parse()
 
-	rand.Seed( /*time.Now().UnixNano()*/ 120452521512)
+	rand.Seed(time.Now().UnixNano())
 
 	if *help {
 		fmt.Println("This program uses flags to run the different commands, the following flags are availablle:\n" +
@@ -66,11 +65,11 @@ func main() {
 			panic("Error: " + err.Error())
 		}*/
 		_ = writeToFile(generateRandomTxs(1000000), "txs.txt")
-		err := earnings2()
+		err := earnings()
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
-		err = generateFees2()
+		err = generateFees()
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
@@ -82,7 +81,10 @@ func main() {
 	}
 
 	if *fees {
-		generateFees()
+		err := generateFees()
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
 	}
 
 	if *genm {
@@ -93,7 +95,10 @@ func main() {
 	}
 
 	if *earn {
-		earnings()
+		err := earnings()
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
 	}
 
 	if *sumt {
@@ -220,164 +225,7 @@ func sum() string {
 	return sumString
 }
 
-// Reads the txs.txt file, generates fees for each row and puts them into the fees.txt file with the same structure.
-func generateFees() {
-	var fee float64
-	var output string
-	bufferSize := 100
-	lineBuffer := 0
-
-	// Open the input file
-	inputFile, err := os.Open("txs.txt")
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-		return
-	}
-
-	// Count the number of lines
-	lineCount, err := lineCounter(inputFile)
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-	}
-	if lineCount < bufferSize {
-		bufferSize = lineCount
-	}
-	inputFile.Close()
-
-	// Open the input file again to read from the start
-	inputFile, err = os.Open("txs.txt")
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-		return
-	}
-
-	defer inputFile.Close()
-
-	// Open the output file
-	outputFile, err := os.Create("fees.txt")
-	if err != nil {
-		fmt.Println("Error accessing fees.txt file.")
-		return
-	}
-	// Close the file after used
-	defer outputFile.Close()
-
-	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
-	scanner := bufio.NewScanner(inputFile)
-
-	scanner.Split(bufio.ScanLines)
-	// For each line generate the fee (30%)
-	for scanner.Scan() {
-		// Add the line to the fee value, if invalid input return an error
-		fee, err = strconv.ParseFloat(scanner.Text(), 32)
-		if err != nil {
-			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
-				" a valid file.")
-			return
-		}
-		// Calculate the fee
-		fee = math.Round(fee*0.30*100) / 100
-		// Add it to the output buffer
-		output = output + fmt.Sprintf("%v\n", fee)
-		lineBuffer = lineBuffer + 1
-		if lineBuffer == bufferSize {
-			// Add it to the output document
-			_, err = outputFile.WriteString(output)
-			if err != nil {
-				fmt.Println("Error writing to fees.txt file.")
-				return
-			}
-			// Resets the buffer, and sets it size to the smallest value between lineCount (lines left) or 100.
-			lineCount -= lineBuffer
-			lineBuffer = 0
-			output = ""
-			if lineCount < bufferSize {
-				bufferSize = lineCount
-			}
-		}
-	}
-}
-
-// Calculates the earnings of the app provider (70%) and puts it into the earnings.txt file.
-func earnings() {
-	var profit float64
-	var output string
-	bufferSize := 100
-	lineBuffer := 0
-
-	// Open the input file
-	inputFile, err := os.Open("txs.txt")
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-		return
-	}
-
-	// Count the number of lines
-	lineCount, err := lineCounter(inputFile)
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-	}
-	if lineCount < bufferSize {
-		bufferSize = lineCount
-	}
-	inputFile.Close()
-
-	// Open the input file again to read from the start
-	inputFile, err = os.Open("txs.txt")
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-		return
-	}
-
-	defer inputFile.Close()
-
-	// Open the output file
-	outputFile, err := os.Create("earnings.txt")
-	if err != nil {
-		fmt.Println("Error accessing earnings.txt file.")
-		return
-	}
-	// Close the file after used
-	defer outputFile.Close()
-
-	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
-	scanner := bufio.NewScanner(inputFile)
-
-	scanner.Split(bufio.ScanLines)
-
-	// For each line generate the earnings (70%)
-	for scanner.Scan() {
-		// Add the line to the profit value, if invalid input return an error
-		profit, err = strconv.ParseFloat(scanner.Text(), 32)
-		if err != nil {
-			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
-				" a valid file.")
-			return
-		}
-		// Calculate the earnings
-		profit = math.Round(profit*70) / 100
-		// Add it to the output buffer
-		output = output + fmt.Sprintf("%v\n", profit)
-		lineBuffer = lineBuffer + 1
-		if lineBuffer == bufferSize {
-			// Add it to the output document
-			_, err = outputFile.WriteString(output)
-			if err != nil {
-				fmt.Println("Error writing to earnings.txt file.")
-				return
-			}
-			// Resets the buffer, and sets it size to the smallest value between lineCount (lines left) or 100.
-			lineCount -= lineBuffer
-			lineBuffer = 0
-			output = ""
-			if lineCount < bufferSize {
-				bufferSize = lineCount
-			}
-		}
-	}
-}
-
-func generateFees2() error {
+func generateFees() error {
 	var err error
 	var rounding int
 	var fee int
@@ -417,7 +265,7 @@ func generateFees2() error {
 	return err
 }
 
-func earnings2() error {
+func earnings() error {
 	var earning int
 	var rounding int
 	var err error
