@@ -15,15 +15,15 @@ func TestGenerateRandomTxs(t *testing.T) {
 	}
 
 	hash := generateFileHash("txs.txt")
-	if hash != "[6 243 251 141 40 164 224 157 194 123 85 134 150 93 230 192 64 124"+
-		" 231 223 36 73 202 193 208 241 206 159 209 26 52 95]" {
+	if hash != "[232 177 111 35 146 228 191 133 121 113 151 98 106 220 145 95 48 217"+
+		" 199 141 211 132 129 211 93 72 187 80 113 82 3 125]" {
 		t.Error("testGenerateRandomTxs did not generate the expected output.")
 	}
 }
 
 // Tests the sum function by checking if a predefined input gives the expected output
 func TestSum(t *testing.T) {
-	if sum() != 51005.23 {
+	if sum() != "50953.66" {
 		t.Error("testSum did not generate the expected output.")
 	}
 }
@@ -31,10 +31,13 @@ func TestSum(t *testing.T) {
 // Tests the generateFees function by checking if a predefined input gives the expected output
 // which is tested using a hash of the contents of the output file
 func TestGenerateFees(t *testing.T) {
-	generateFees()
+	err := generateFees()
+	if err != nil {
+		t.Error("testGenerateFees did not generate the expected output")
+	}
 	hash := generateFileHash("fees.txt")
-	if hash != "[201 7 165 170 38 39 62 218 216 5 12 126 244 189 135 232 70 213"+
-		" 112 215 194 167 65 93 115 122 253 86 59 4 143 38]" {
+	if hash != "[84 30 54 38 142 63 87 254 171 62 56 149 214 171 218 104 228 96"+
+		" 82 254 189 131 238 88 159 96 67 72 255 216 95 64]" {
 		t.Error("testGenerateFees did not generate the expected output.")
 	}
 }
@@ -42,10 +45,13 @@ func TestGenerateFees(t *testing.T) {
 // Tests the earnings function by checking if a predefined input gives the expected output
 // which is tested using a hash of the contents of the output file
 func TestEarnings(t *testing.T) {
-	earnings()
+	err := earnings()
+	if err != nil {
+		t.Error("testEarnings did not generate the expected output")
+	}
 	hash := generateFileHash("earnings.txt")
-	if hash != "[6 254 114 199 232 143 53 217 190 61 148 6 22 231 217 198"+
-		" 233 94 80 201 27 6 65 103 190 177 169 153 139 189 188 6]" {
+	if hash != "[46 124 31 89 251 58 87 190 162 210 0 87 137 241 105 101 65"+
+		" 48 18 38 206 101 155 128 161 48 117 143 20 161 205 149]" {
 		t.Error("testEarnings did not generate the expected output.")
 	}
 }
@@ -53,7 +59,7 @@ func TestEarnings(t *testing.T) {
 // Tests the compare function with a predefined input checking if it gives the expected output
 func TestCompare(t *testing.T) {
 	number1, number2 := compare()
-	if number1 != 0.08 || number2 != 30603.18 {
+	if number1 != "0.5" || number2 != "-0.5" {
 		t.Error("testCompare did not generate the expected output.")
 	}
 }
@@ -68,8 +74,8 @@ func TestGenerateMillionTxs(t *testing.T) {
 	}
 
 	hash := generateFileHash("txs.txt")
-	if hash != "[240 176 187 255 29 141 235 56 144 2 225 71 118 163 19 180 228 118 1"+
-		" 34 250 158 37 93 128 73 29 62 39 153 161 75]" {
+	if hash != "[125 100 214 116 55 106 43 254 224 115 13 67 64 240 34 4 203 174 1 213"+
+		" 121 218 59 163 179 103 220 250 90 139 15 224]" {
 		t.Error("testGenerateMillionTxs did not generate the expected output.")
 	}
 }

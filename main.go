@@ -23,7 +23,7 @@ func main() {
 	earn := flag.Bool("earn", false, "Run the earnings function.")
 	comp := flag.Bool("comp", false, "Run the compare function.")
 	help := flag.Bool("help", false, "Print out the available functions.")
-	sumt := flag.Bool("sumt", false, "Run the sumt function.")
+	sumt := flag.Bool("sumt", false, "Run the sum function.")
 	genm := flag.Bool("genm", false, "Run the generateMillionTxs function.")
 
 	// For the generate flag
@@ -33,6 +33,7 @@ func main() {
 	// Parse the flags
 	flag.Parse()
 
+	// Set the random seed to the current time
 	rand.Seed(time.Now().UnixNano())
 
 	if *help {
@@ -60,12 +61,11 @@ func main() {
 
 	// If no flags are provided run the default routine
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
-		/*err := generateMillionTxs()
+		err := generateMillionTxs()
 		if err != nil {
 			panic("Error: " + err.Error())
-		}*/
-		_ = writeToFile(generateRandomTxs(1000000), "txs.txt")
-		err := earnings()
+		}
+		err = earnings()
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
@@ -114,6 +114,8 @@ func main() {
 	if *perf {
 		fmt.Println("Time to run: ", time.Since(timeStart))
 	}
+
+	fmt.Println("Time to run: ", time.Since(timeStart))
 }
 
 // Takes n and generates n integers in an array, each containing a random number between 1 and 9999
@@ -338,6 +340,9 @@ func generateMillionTxs() error {
 
 // Generates a filehash from the input filename and returns it as a string
 func generateFileHash(filename string) string {
+	var inputString string
+	var inputVal int
+
 	inputFile, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("Error accessing " + filename + " file.")
@@ -354,13 +359,17 @@ func generateFileHash(filename string) string {
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-		// The input value is converted to a float, then later to string again to ignore all os specific line endings.
-		inputVal, err := strconv.ParseFloat(scanner.Text(), 32)
+		// Add the line to the inputVal, if invalid input return an error
+		inputString = scanner.Text()
+		// Remove the dot and convert to integer
+		inputString = strings.Replace(inputString, ".", "", 1)
+		inputVal, err = strconv.Atoi(inputString)
 		if err != nil {
-			fmt.Println("Error: txs.txt contains invalid values. Please refer to documentation to generate" +
-				" a valid file.")
+			fmt.Println("Error: " + filename + " contains invalid values. Please refer to documentation" +
+				" to generate a valid file.")
 			return ""
 		}
+		// Add the fee to the total
 		// Add the line to the fileHash
 		fileHash.Write([]byte(fmt.Sprintf("%v", inputVal)))
 	}
@@ -403,7 +412,7 @@ func readFileAndSumLines(filename string) int {
 	return totalSum
 }
 
-// Function that counts lines, retrieved from:
+// Function that counts lines in a file, retrieved from:
 // https://stackoverflow.com/questions/24562942/golang-how-do-i-determine-the-number-of-lines-in-a-file-efficiently
 func lineCounter(r io.Reader) (int, error) {
 	buf := make([]byte, 32*1024)
