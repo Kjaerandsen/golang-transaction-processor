@@ -61,10 +61,15 @@ func main() {
 
 	// If no flags are provided run the default routine
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
-		/*err := generateMillionTxs()
+		err := generateMillionTxs()
 		if err != nil {
 			panic("Error: " + err.Error())
-		}*/
+		}
+		err = earnings2()
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
+		generateFees()
 		number1, number2 := compare()
 		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
@@ -362,6 +367,29 @@ func earnings() {
 			}
 		}
 	}
+}
+
+func earnings2() error {
+	transactions, err := readFromFile("txs.txt")
+	if err != nil {
+		fmt.Println("Error reading from txs.txt")
+		return err
+	}
+
+	// Go through the list of transactions
+	for i := 0; i < len(transactions); i++ {
+		// Calculate the earnings
+		transactions[i] = transactions[i] * 70 / 100
+	}
+
+	// write to file
+	err = writeToFile(transactions, "earnings.txt")
+	if err != nil {
+		fmt.Println("Error writing to earnings.txt")
+		return err
+	}
+
+	return nil
 }
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
