@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -130,6 +131,40 @@ func generateRandomTxs(n int) {
 		}
 		outputString = ""
 	}
+}
+
+func writeToFile(n []int, filename string) error {
+	// Create a buffer for writing each line
+	outputLine := strings.Builder{}
+	outputLine.Grow(7)
+
+	// Create a buffer for writing to the file
+	buf := strings.Builder{}
+	// Size it to the contents being written
+	// 7 as in characters per line max (line endings + contents should never exceed seven characters)
+	buf.Grow(len(n) * 7)
+
+	// Convert the integers to floats in strings and add them to the write buffer
+	for i := 0; i < len(n); i++ {
+		outputLine.WriteString(strconv.Itoa(n[i]/100) + "." + strconv.Itoa(n[i]%100) + "\n")
+		buf.WriteString(outputLine.String())
+		buf.Reset()
+	}
+
+	// Create the output file
+	outputFile, err := os.Create(filename)
+	if err != nil {
+		fmt.Println("Error accessing " + filename + " file.")
+		return err
+	}
+
+	// Write the buffer to the file
+	_, err = outputFile.WriteString(buf.String())
+
+	// Close the file
+	outputFile.Close()
+
+	return err
 }
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
