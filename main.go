@@ -34,7 +34,7 @@ func main() {
 	// Parse the flags
 	flag.Parse()
 
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed( /*time.Now().UnixNano()*/ 120452521512)
 
 	if *help {
 		fmt.Println("This program uses flags to run the different commands, the following flags are availablle:\n" +
@@ -61,11 +61,12 @@ func main() {
 
 	// If no flags are provided run the default routine
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
-		err := generateMillionTxs()
+		/*err := generateMillionTxs()
 		if err != nil {
 			panic("Error: " + err.Error())
-		}
-		err = earnings2()
+		}*/
+		_ = writeToFile(generateRandomTxs(1000000), "txs.txt")
+		err := earnings2()
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
@@ -73,6 +74,8 @@ func main() {
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
+		//earnings()
+		//generateFees()
 		number1, number2 := compare()
 		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
@@ -121,6 +124,7 @@ func generateRandomTxs(n int) []int {
 }
 
 func writeToFile(n []int, filename string) error {
+	var commaValues string
 	// Create a buffer for writing each line
 	outputLine := strings.Builder{}
 	outputLine.Grow(7)
@@ -131,9 +135,11 @@ func writeToFile(n []int, filename string) error {
 	// 7 as in characters per line max (line endings + contents should never exceed seven characters)
 	buf.Grow(len(n) * 7)
 
-	// Convert the integers to floats in strings and add them to the write buffer
+	// Convert the integers to floats in strings and add them to the write-buffer
 	for i := 0; i < len(n); i++ {
-		outputLine.WriteString(strconv.Itoa(n[i]/100) + "." + strconv.Itoa(n[i]%100) + "\n")
+		outputLine.WriteString(strconv.Itoa(n[i]/100) + ".")
+		commaValues = fmt.Sprintf("%02v", strconv.Itoa(n[i]%100))
+		outputLine.WriteString(commaValues + "\n")
 		buf.WriteString(outputLine.String())
 		outputLine.Reset()
 	}
@@ -202,7 +208,7 @@ func readFromFile(filename string) ([]int, error) {
 		}
 		i++
 	}
-
+	fmt.Println(len(outputArr))
 	return outputArr, err
 }
 
@@ -293,31 +299,6 @@ func generateFees() {
 	}
 }
 
-func generateFees2() error {
-	var err error
-
-	transactions, err := readFromFile("txs.txt")
-	if err != nil {
-		fmt.Println("Error reading from txs.txt")
-		return err
-	}
-
-	// Go through the list of transactions
-	for i := 0; i < len(transactions); i++ {
-		// Calculate the earnings
-		transactions[i] = transactions[i] * 30 / 100
-	}
-
-	// write to file
-	err = writeToFile(transactions, "fees.txt")
-	if err != nil {
-		fmt.Println("Error writing to fees.txt")
-		return err
-	}
-
-	return err
-}
-
 // Calculates the earnings of the app provider (70%) and puts it into the earnings.txt file.
 func earnings() {
 	var profit float64
@@ -397,7 +378,11 @@ func earnings() {
 	}
 }
 
-func earnings2() error {
+func generateFees2() error {
+	var err error
+	var rounding int
+	var fee int
+
 	transactions, err := readFromFile("txs.txt")
 	if err != nil {
 		fmt.Println("Error reading from txs.txt")
@@ -406,8 +391,61 @@ func earnings2() error {
 
 	// Go through the list of transactions
 	for i := 0; i < len(transactions); i++ {
+		rounding = 0
+		// Calculate the fee
+		fee = transactions[i] * 3
+		rounding = fee % 10
+		// If .5 and even odd number round up
+		if rounding == 5 {
+			if (fee/10)%2 == 1 {
+				fee += 10
+			}
+			// If more than .5 round up
+		} else if rounding > 5 {
+			fee += 10
+		}
+
+		transactions[i] = fee / 10
+	}
+
+	// write to file
+	err = writeToFile(transactions, "fees.txt")
+	if err != nil {
+		fmt.Println("Error writing to fees.txt")
+		return err
+	}
+
+	return err
+}
+
+func earnings2() error {
+	var earning int
+	var rounding int
+	var err error
+
+	transactions, err := readFromFile("txs.txt")
+	if err != nil {
+		fmt.Println("Error reading from txs.txt")
+		return err
+	}
+
+	// Go through the list of transactions
+	for i := 0; i < len(transactions); i++ {
+		rounding = 0
 		// Calculate the earnings
-		transactions[i] = transactions[i] * 70 / 100
+		earning = transactions[i] * 7
+		// If .5 and odd number round up
+		rounding = earning % 10
+		if rounding == 5 {
+			if (earning/10)%2 == 1 {
+				earning += 10
+			}
+			// If more than .5 round up
+		} else if rounding > 5 {
+			earning += 10
+		}
+
+		transactions[i] = earning / 10
 	}
 
 	// write to file
@@ -417,16 +455,29 @@ func earnings2() error {
 		return err
 	}
 
-	return nil
+	return err
 }
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
 func compare() (string, string) {
 	feesSum := readFileAndSumLines("fees.txt")
+	fmt.Println(feesSum)
+
 	total := readFileAndSumLines("txs.txt")
-	feesTotal := total * 3 / 10
+	fmt.Println(total)
+	fmt.Println(total * 3 / 10)
 	totalEarnings := readFileAndSumLines("earnings.txt")
 	var test int
+
+	totalMod10 := total % 10
+	feesTotal := total * 3
+	if totalMod10 == 5 {
+		feesTotal = feesTotal/10 + 1
+	} else if totalMod10 > 5 {
+		feesTotal = feesTotal/10 + 1
+	} else {
+		feesTotal = feesTotal / 10
+	}
 
 	test = feesSum - feesTotal
 	number1 := fmt.Sprintf("%v.%v", test/100, test%100)
@@ -503,7 +554,7 @@ func readFileAndSumLines(filename string) int {
 			return 0
 		}
 		// Add the fee to the total
-		totalSum += inputVal
+		totalSum = totalSum + inputVal
 	}
 
 	return totalSum
