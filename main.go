@@ -365,14 +365,19 @@ func earnings() {
 }
 
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
-func compare() (int, int) {
+func compare() (string, string) {
 	feesSum := readFileAndSumLines("fees.txt")
 	total := readFileAndSumLines("txs.txt")
 	feesTotal := total * 3 / 10
 	totalEarnings := readFileAndSumLines("earnings.txt")
+	var test int
 
-	return feesSum - feesTotal, // Number 1
-		total - (totalEarnings - feesSum) // Number 2
+	test = feesSum - feesTotal
+	number1 := fmt.Sprintf("%v.%v", test/100, test%100)
+	test = total - (totalEarnings - feesSum)
+	number2 := fmt.Sprintf("%v.%v", test/100, test%100)
+
+	return number1, number2
 }
 
 // Same as generateRandomTxs, but for a million values.
