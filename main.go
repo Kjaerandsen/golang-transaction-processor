@@ -53,12 +53,18 @@ func main() {
 	if genValue != 0 && genValue < 0 {
 		genValue = 0
 	} else if genValue != 0 {
-		generateRandomTxs(genValue)
+		err := writeToFile(generateRandomTxs(genValue), "txs.txt")
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
 	}
 
 	// If no flags are provided run the default routine
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
-		generateMillionTxs()
+		err := generateMillionTxs()
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
 		number1, number2 := compare()
 		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
@@ -69,7 +75,10 @@ func main() {
 	}
 
 	if *genm {
-		generateMillionTxs()
+		err := generateMillionTxs()
+		if err != nil {
+			panic("Error: " + err.Error())
+		}
 	}
 
 	if *earn {
@@ -91,46 +100,16 @@ func main() {
 	}
 }
 
-// Takes n and generates n rows in a text file, each containing a random number between 0.01 and 99.99
-// with a uniform random distribution, this is written to the file txs.txt
-func generateRandomTxs(n int) {
-	transactionsLeft := n
-	loopSize := 100
-	var outputString string
+// Takes n and generates n integers in an array, each containing a random number between 1 and 9999
+// with a uniform random distribution
+func generateRandomTxs(n int) []int {
+	var randomTxs = make([]int, n)
 
-	outputFile, err := os.Create("txs.txt")
-	if err != nil {
-		fmt.Println("Error accessing txs.txt file.")
-		return
+	for i := 0; i < n; i++ {
+		randomTxs[i] = rand.Intn(9999)
 	}
-	// Close the file after used
-	defer outputFile.Close()
 
-	// Write 100 lines at a time to reduce the number of system calls
-	for {
-		if transactionsLeft == 0 {
-			break
-		}
-
-		if transactionsLeft < 100 {
-			loopSize = transactionsLeft
-			transactionsLeft = 0
-		} else {
-			transactionsLeft -= 100
-		}
-
-		for i := 0; i < loopSize; i++ {
-			outputString = outputString +
-				fmt.Sprintf("%v\n", math.Round((float64(rand.Intn(9999))/100)*100)/100)
-		}
-
-		_, err = outputFile.WriteString(outputString)
-		if err != nil {
-			fmt.Println("Error writing to txs.txt file.")
-			return
-		}
-		outputString = ""
-	}
+	return randomTxs
 }
 
 func writeToFile(n []int, filename string) error {
@@ -148,7 +127,7 @@ func writeToFile(n []int, filename string) error {
 	for i := 0; i < len(n); i++ {
 		outputLine.WriteString(strconv.Itoa(n[i]/100) + "." + strconv.Itoa(n[i]%100) + "\n")
 		buf.WriteString(outputLine.String())
-		buf.Reset()
+		outputLine.Reset()
 	}
 
 	// Create the output file
@@ -344,8 +323,9 @@ func compare() (float64, float64) {
 }
 
 // Same as generateRandomTxs, but for a million values.
-func generateMillionTxs() {
-	generateRandomTxs(1000000)
+func generateMillionTxs() error {
+	err := writeToFile(generateRandomTxs(1000000), "txs.txt")
+	return err
 }
 
 // Generates a filehash from the input filename and returns it as a string

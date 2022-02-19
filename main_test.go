@@ -9,17 +9,21 @@ import (
 // and testing the outputfile hash for integrity of the output
 func TestGenerateRandomTxs(t *testing.T) {
 	rand.Seed(1099293902193012)
-	generateRandomTxs(1000)
+	err := writeToFile(generateRandomTxs(1000), "txs.txt")
+	if err != nil {
+		t.Error("Error writing to txs.txt: " + err.Error())
+	}
+
 	hash := generateFileHash("txs.txt")
-	if hash != "[147 25 97 34 103 197 218 137 95 62 208 93 4 109 185 96 177 115 145"+
-		" 33 121 2 89 244 114 233 57 114 166 8 247 156]" {
+	if hash != "[6 243 251 141 40 164 224 157 194 123 85 134 150 93 230 192 64 124"+
+		" 231 223 36 73 202 193 208 241 206 159 209 26 52 95]" {
 		t.Error("testGenerateRandomTxs did not generate the expected output.")
 	}
 }
 
 // Tests the sum function by checking if a predefined input gives the expected output
 func TestSum(t *testing.T) {
-	if sum() != 50953.66 {
+	if sum() != 51005.23 {
 		t.Error("testSum did not generate the expected output.")
 	}
 }
@@ -29,8 +33,8 @@ func TestSum(t *testing.T) {
 func TestGenerateFees(t *testing.T) {
 	generateFees()
 	hash := generateFileHash("fees.txt")
-	if hash != "[196 66 18 200 137 14 208 100 162 32 169 160 24 177 19 249 173"+
-		" 213 93 17 0 65 4 174 212 129 82 34 199 36 95 16]" {
+	if hash != "[201 7 165 170 38 39 62 218 216 5 12 126 244 189 135 232 70 213"+
+		" 112 215 194 167 65 93 115 122 253 86 59 4 143 38]" {
 		t.Error("testGenerateFees did not generate the expected output.")
 	}
 }
@@ -40,8 +44,8 @@ func TestGenerateFees(t *testing.T) {
 func TestEarnings(t *testing.T) {
 	earnings()
 	hash := generateFileHash("earnings.txt")
-	if hash != "[186 146 193 253 129 199 7 183 184 172 157 72 163 29 145 "+
-		"152 192 127 248 31 228 30 237 9 243 118 85 184 56 7 69 125]" {
+	if hash != "[6 254 114 199 232 143 53 217 190 61 148 6 22 231 217 198"+
+		" 233 94 80 201 27 6 65 103 190 177 169 153 139 189 188 6]" {
 		t.Error("testEarnings did not generate the expected output.")
 	}
 }
@@ -49,7 +53,7 @@ func TestEarnings(t *testing.T) {
 // Tests the compare function with a predefined input checking if it gives the expected output
 func TestCompare(t *testing.T) {
 	number1, number2 := compare()
-	if number1 != 0.06 || number2 != 30572.3 {
+	if number1 != 0.08 || number2 != 30603.18 {
 		t.Error("testCompare did not generate the expected output.")
 	}
 }
@@ -58,9 +62,14 @@ func TestCompare(t *testing.T) {
 // which is tested using a hash of the contents of the output file
 func TestGenerateMillionTxs(t *testing.T) {
 	rand.Seed(1099293902193012)
+	err := generateMillionTxs()
+	if err != nil {
+		t.Error("Error writing to txs.txt: " + err.Error())
+	}
+
 	hash := generateFileHash("txs.txt")
-	if hash != "[147 25 97 34 103 197 218 137 95 62 208 93 4 109 185 96 177 115 145 "+
-		"33 121 2 89 244 114 233 57 114 166 8 247 156]" {
+	if hash != "[240 176 187 255 29 141 235 56 144 2 225 71 118 163 19 180 228 118 1"+
+		" 34 250 158 37 93 128 73 29 62 39 153 161 75]" {
 		t.Error("testGenerateMillionTxs did not generate the expected output.")
 	}
 }
