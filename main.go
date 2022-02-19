@@ -208,7 +208,6 @@ func readFromFile(filename string) ([]int, error) {
 		}
 		i++
 	}
-	fmt.Println(len(outputArr))
 	return outputArr, err
 }
 
@@ -461,11 +460,7 @@ func earnings2() error {
 // Calculates two numbers, fees sum - fees total and total - total earnings + fees sum
 func compare() (string, string) {
 	feesSum := readFileAndSumLines("fees.txt")
-	fmt.Println(feesSum)
-
 	total := readFileAndSumLines("txs.txt")
-	fmt.Println(total)
-	fmt.Println(total * 3 / 10)
 	totalEarnings := readFileAndSumLines("earnings.txt")
 	var test int
 
@@ -481,7 +476,7 @@ func compare() (string, string) {
 
 	test = feesSum - feesTotal
 	number1 := fmt.Sprintf("%v.%v", test/100, test%100)
-	test = total - (totalEarnings - feesSum)
+	test = total - (totalEarnings + feesSum)
 	number2 := fmt.Sprintf("%v.%v", test/100, test%100)
 
 	return number1, number2
