@@ -3,6 +3,7 @@ package main
 import (
 	"math/rand"
 	"testing"
+	"time"
 )
 
 // Tests the generateRandomTxs function by running it with a fixed seed
@@ -19,6 +20,20 @@ func TestGenerateRandomTxs(t *testing.T) {
 		" 199 141 211 132 129 211 93 72 187 80 113 82 3 125]" {
 		t.Error("testGenerateRandomTxs did not generate the expected output.")
 	}
+
+	// Set the random seed to a new random value
+	rand.Seed(time.Now().UnixNano())
+	// Generate and test progressively bigger numbers
+	testRange := [3]int{100, 10000, 1000000}
+	for i := 0; i < len(testRange); i++ {
+		transactions := generateRandomTxs(testRange[i])
+		for x := 0; x < len(transactions); x++ {
+			if transactions[i] > 10000 || transactions[i] < 0 {
+				t.Error("TestGenerateRandomTxs generated an invalid number")
+			}
+		}
+	}
+
 }
 
 // Tests the sum function by checking if a predefined input gives the expected output
