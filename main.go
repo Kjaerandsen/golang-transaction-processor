@@ -61,10 +61,10 @@ func main() {
 
 	// If no flags are provided run the default routine
 	if !*fees && !*earn && !*comp && !*help && !*genm && !*sumt && genValue == 0 {
-		err := generateMillionTxs()
+		/*err := generateMillionTxs()
 		if err != nil {
 			panic("Error: " + err.Error())
-		}
+		}*/
 		number1, number2 := compare()
 		fmt.Println("Number 1: ", number1, "Number2: ", number2)
 		fmt.Println("For help on using the program run the program with the -help parameter or refer to the readme")
@@ -144,6 +144,58 @@ func writeToFile(n []int, filename string) error {
 	outputFile.Close()
 
 	return err
+}
+
+// Reads the lines in a file and returns each line as an integer (remove ".")
+func readFromFile(filename string) ([]int, error) {
+	var inputString string
+	var i = 0
+	var err error
+
+	// Count the number of lines
+	inputFile, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Error accessing " + filename + " file.")
+		return nil, err
+	}
+	lineCount, err := lineCounter(inputFile)
+	if err != nil {
+		fmt.Println("Error accessing " + filename + " file.")
+		return nil, err
+	}
+	inputFile.Close()
+
+	var outputArr = make([]int, lineCount)
+
+	// Open again for reading the values
+	inputFile, err = os.Open(filename)
+	if err != nil {
+		fmt.Println("Error accessing " + filename + " file.")
+		return nil, err
+	}
+
+	defer inputFile.Close()
+
+	// Reads the file line by line, using code from https://golangdocs.com/golang-read-file-line-by-line
+	scanner := bufio.NewScanner(inputFile)
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		// Add the line to the inputVal, if invalid input return an error
+		inputString = scanner.Text()
+		// Remove the dot and convert to integer
+		inputString = strings.Replace(inputString, ".", "", 1)
+		// Add the int to the output string
+		outputArr[i], err = strconv.Atoi(inputString)
+		if err != nil {
+			fmt.Println("Error: " + filename + " contains invalid values. Please refer to documentation" +
+				" to generate a valid file.")
+			return nil, err
+		}
+		i++
+	}
+
+	return outputArr, err
 }
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
@@ -397,7 +449,7 @@ func readFileAndSumLines(filename string) int {
 }
 
 // Function that counts lines, retrieved from:
-// git
+// https://stackoverflow.com/questions/24562942/golang-how-do-i-determine-the-number-of-lines-in-a-file-efficiently
 func lineCounter(r io.Reader) (int, error) {
 	buf := make([]byte, 32*1024)
 	count := 0
