@@ -122,7 +122,6 @@ func main() {
 		fmt.Println("Time to run: ", time.Since(timeStart))
 	}
 
-	fmt.Println("Time to run: ", time.Since(timeStart))
 }
 
 // Takes n and generates n integers in an array, each containing a random number between 1 and 9999
@@ -137,6 +136,7 @@ func generateRandomTxs(n int) []int {
 	return randomTxs
 }
 
+// Takes an array of integers and writes it into a file as floats (the first two numbers are after the comma)
 func writeToFile(n []int, filename string) error {
 	var commaValues string
 	// Create a buffer for writing each line
@@ -174,7 +174,7 @@ func writeToFile(n []int, filename string) error {
 	return err
 }
 
-// Reads the lines in a file and returns each line as an integer (remove ".")
+// Reads the lines in a file and returns each line as an integer in an integer array (remove ".")
 func readFromFile(filename string) ([]int, error) {
 	var inputString string
 	var i = 0
@@ -193,6 +193,7 @@ func readFromFile(filename string) ([]int, error) {
 	}
 	inputFile.Close()
 
+	// Create an output array of the same size as the input file
 	var outputArr = make([]int, lineCount)
 
 	// Open again for reading the values
@@ -240,6 +241,7 @@ func generateFees() error {
 	var rounding int
 	var fee int
 
+	// Read the transaction data from file
 	transactions, err := readFromFile(transactionsFile)
 	if err != nil {
 		fmt.Println("Error reading from txs.txt")
@@ -281,6 +283,7 @@ func earnings() error {
 	var rounding int
 	var err error
 
+	// Read the transactions from file
 	transactions, err := readFromFile(transactionsFile)
 	if err != nil {
 		fmt.Println("Error reading from txs.txt")
@@ -336,8 +339,8 @@ func compare() (string, string) {
 		feesTotal = feesTotal / 10
 	}
 
-	// If the value is negative, fix the formatting
 	test = feesSum - feesTotal
+	// If the value is negative, fix the formatting
 	if test > 0 {
 		number1 = fmt.Sprintf("%v.%v", test/100, test%100)
 	} else {
@@ -362,7 +365,7 @@ func generateMillionTxs() error {
 	return err
 }
 
-// Generates a filehash from the input filename and returns it as a string
+// Generates a hash from the input filenames contents and returns it as a string
 func generateFileHash(filename string) string {
 	var inputString string
 	var inputVal int
