@@ -38,9 +38,13 @@ Reads the txs.txt file, sums all the numbers and writes it to the terminal.
 
 It also has some helper functions:
 generateFileHash: 
-Reads the file line by line and creates a hash of all the float values. This is used for unit testing.
+Reads the file line by line and creates a hash of all the values (as integers). This is used for unit testing.
 readFileAndSumLines: 
 Reads the file line by line and sums the float values of each line. This is used for the compare function internals and sum.
+readFromFile: 
+Reads the contents of the file, removes the end of line characters and ".", and returns the contents as an integer array.
+writeToFile: 
+Takes an integer array and writes it to file as floats (adds "." to the third last character)
 lineCounter: 
 Reads the file and returns the amount of lines in the file. This is used in the generateFees and earnings functions.
 
@@ -81,3 +85,23 @@ Issues, time estimated and time spent:
 Total time estimate: 11h 30m
 Total time spent: 6h 22m
 The estimated difficulty was pretty accurate, but i was too lenient on the time estimates.
+
+## Second delivery notes:
+The program now uses integers instead of floats, and runs much faster. A whole unit test round which includes writing a million records twice and all the functions, plus reading all the files takes less than a second on my computer.
+New helper functions have been created which makes some functions a lot shorter in length, (readfromfile).
+I had some trouble with rounding due to an error with writing to file (1.00 got written as 1 instead).
+Consts are implemented for some values used in several places.
+Unit tests now test more generate values.
+
+## Time tracking for the second delivery:
+1. generateRandomTxs function rewrite: Estimated 30m, spent 30m.
+2. New write to file function with buffer: Estimated 45m, spent 45m.
+3. Unit test update & upgrade: Estimated 30m, spent 15m.
+4. Better rounding algorithm.: Estimated 45m, spent 1h 45m.
+5. New ReadFromFile functions: Estimated 45m, spent 45m.
+6. generateFees and earnings rewrite: Estimated 45m, spent 45m.
+7. Final touches and consts: Estimated 1h, spent 30m.
+
+Total time estimate: 5h
+Total time spent:    5h 15m
+Combined time spent: 11h 37m
