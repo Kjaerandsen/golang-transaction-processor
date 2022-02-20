@@ -26,9 +26,10 @@ func TestGenerateRandomTxs(t *testing.T) {
 	// Generate and test progressively bigger numbers
 	testRange := [3]int{100, 10000, Million}
 	for i := 0; i < len(testRange); i++ {
+		// Check if the values are within the allowed range
 		transactions := generateRandomTxs(testRange[i])
 		for x := 0; x < len(transactions); x++ {
-			if transactions[i] > 10000 || transactions[i] < 0 {
+			if transactions[x] > 10000 || transactions[x] < 0 {
 				t.Error("TestGenerateRandomTxs generated an invalid number")
 			}
 		}
@@ -50,6 +51,16 @@ func TestGenerateFees(t *testing.T) {
 	if err != nil {
 		t.Error("testGenerateFees did not generate the expected output")
 	}
+	// Check if the values are within the allowed range
+	transactions, err := readFromFile(feesFile)
+	if err != nil {
+		t.Error("testGenerateFees, unable to read the file fees.txt")
+	}
+	for i := 0; i < len(transactions); i++ {
+		if transactions[i] > 10000 || transactions[i] < 0 {
+			t.Error("TestGenerateRandomTxs generated an invalid number")
+		}
+	}
 	hash := generateFileHash(feesFile)
 	if hash != "[84 30 54 38 142 63 87 254 171 62 56 149 214 171 218 104 228 96"+
 		" 82 254 189 131 238 88 159 96 67 72 255 216 95 64]" {
@@ -63,6 +74,16 @@ func TestEarnings(t *testing.T) {
 	err := earnings()
 	if err != nil {
 		t.Error("testEarnings did not generate the expected output")
+	}
+	// Check if the values are within the allowed range
+	transactions, err := readFromFile(earningsFile)
+	if err != nil {
+		t.Error("testEarnings, unable to read the file earnings.txt")
+	}
+	for i := 0; i < len(transactions); i++ {
+		if transactions[i] > 10000 || transactions[i] < 0 {
+			t.Error("TestGenerateRandomTxs generated an invalid number")
+		}
 	}
 	hash := generateFileHash(earningsFile)
 	if hash != "[46 124 31 89 251 58 87 190 162 210 0 87 137 241 105 101 65"+
