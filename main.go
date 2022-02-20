@@ -19,6 +19,8 @@ const (
 	feesFile         = "fees.txt"
 	earningsFile     = "earnings.txt"
 	transactionsFile = "txs.txt"
+	earningsrate     = 7 // Multiplied by 10 to use with integer functions
+	feesrate         = 3 // Multiplied by 10 to use with integer functions
 )
 
 // Takes flags to run the different functions.
@@ -252,7 +254,7 @@ func generateFees() error {
 	for i := 0; i < len(transactions); i++ {
 		rounding = 0
 		// Calculate the fee
-		fee = transactions[i] * 3
+		fee = transactions[i] * feesrate
 		rounding = fee % 10
 		// If .5 and even odd number round up
 		if rounding == 5 {
@@ -294,7 +296,7 @@ func earnings() error {
 	for i := 0; i < len(transactions); i++ {
 		rounding = 0
 		// Calculate the earnings
-		earning = transactions[i] * 7
+		earning = transactions[i] * earningsrate
 		// If .5 and odd number round up
 		rounding = earning % 10
 		if rounding == 5 {
@@ -330,7 +332,7 @@ func compare() (string, string) {
 
 	// Rounds the last digit according to bankers rounding
 	totalMod10 := total % 10
-	feesTotal := total * 3
+	feesTotal := total * feesrate
 	if totalMod10 == 5 {
 		feesTotal = feesTotal/10 + 1
 	} else if totalMod10 > 5 {
