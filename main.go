@@ -14,6 +14,13 @@ import (
 	"time"
 )
 
+const (
+	Million          = 1000000
+	feesFile         = "fees.txt"
+	earningsFile     = "earnings.txt"
+	transactionsFile = "txs.txt"
+)
+
 // Takes flags to run the different functions.
 func main() {
 	timeStart := time.Now()
@@ -53,7 +60,7 @@ func main() {
 	if genValue != 0 && genValue < 0 {
 		genValue = 0
 	} else if genValue != 0 {
-		err := writeToFile(generateRandomTxs(genValue), "txs.txt")
+		err := writeToFile(generateRandomTxs(genValue), transactionsFile)
 		if err != nil {
 			panic("Error: " + err.Error())
 		}
@@ -220,7 +227,7 @@ func readFromFile(filename string) ([]int, error) {
 
 // Reads the txs.txt file, sums all the numbers and prints the result.
 func sum() string {
-	totalSum := readFileAndSumLines("txs.txt")
+	totalSum := readFileAndSumLines(transactionsFile)
 
 	sumString := fmt.Sprintf("%v%s%v", totalSum/100, ".", totalSum%100)
 	// Print the result
@@ -233,7 +240,7 @@ func generateFees() error {
 	var rounding int
 	var fee int
 
-	transactions, err := readFromFile("txs.txt")
+	transactions, err := readFromFile(transactionsFile)
 	if err != nil {
 		fmt.Println("Error reading from txs.txt")
 		return err
@@ -259,7 +266,7 @@ func generateFees() error {
 	}
 
 	// write to file
-	err = writeToFile(transactions, "fees.txt")
+	err = writeToFile(transactions, feesFile)
 	if err != nil {
 		fmt.Println("Error writing to fees.txt")
 		return err
@@ -274,7 +281,7 @@ func earnings() error {
 	var rounding int
 	var err error
 
-	transactions, err := readFromFile("txs.txt")
+	transactions, err := readFromFile(transactionsFile)
 	if err != nil {
 		fmt.Println("Error reading from txs.txt")
 		return err
@@ -300,7 +307,7 @@ func earnings() error {
 	}
 
 	// write to file
-	err = writeToFile(transactions, "earnings.txt")
+	err = writeToFile(transactions, earningsFile)
 	if err != nil {
 		fmt.Println("Error writing to earnings.txt")
 		return err
@@ -313,9 +320,9 @@ func earnings() error {
 func compare() (string, string) {
 	var number1 string
 	var number2 string
-	feesSum := readFileAndSumLines("fees.txt")
-	total := readFileAndSumLines("txs.txt")
-	totalEarnings := readFileAndSumLines("earnings.txt")
+	feesSum := readFileAndSumLines(feesFile)
+	total := readFileAndSumLines(transactionsFile)
+	totalEarnings := readFileAndSumLines(earningsFile)
 	var test int
 
 	// Rounds the last digit according to bankers rounding
@@ -351,7 +358,7 @@ func compare() (string, string) {
 
 // Same as generateRandomTxs, but for a million values.
 func generateMillionTxs() error {
-	err := writeToFile(generateRandomTxs(1000000), "txs.txt")
+	err := writeToFile(generateRandomTxs(Million), transactionsFile)
 	return err
 }
 
